@@ -1,2 +1,2 @@
 # PFCodingChallenge
-Front-End Engineer Inter Coding Challenge
+Front-End Engineer Intern Coding Challenge
