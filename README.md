@@ -1,6 +1,12 @@
 # PFCodingChallenge
 Front-End Engineer Intern Coding Challenge
 
+Done in 18hrs - Note on crunchtime affects:
+>This is a front-end reactive web-app. API Fetching is done through Vue, no Backend.
+>However, files were added in src to mock front-end using vue-router.
+> JS ,CSS (no BEM conventions) and HTML were completed in one file HelloWorld.vue to reduce time. 
+
+
 1. Pulls the data from these three text files and finds the 5 most common words across them:
 * Assumed: 
 * Parse through each text file and remove commas, periods, spaces and converted to lowercase in order to retrieve all viable data. 
