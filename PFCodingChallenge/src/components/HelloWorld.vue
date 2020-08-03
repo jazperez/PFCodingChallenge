@@ -27,9 +27,10 @@ export default {
     this.getWordsFromList2(url2);
     this.getWordsFromList3(url3);
   }, 
-  // computed: {
-  //   this.getCommonWords(this.wordList1)
-  // },
+  mounted(){
+    this.getCommonWords();
+    //this.getCommonWords(this.wordList1);
+  },
   methods:{
     getWordsFromList1(url) {
       fetch(url)
@@ -54,7 +55,7 @@ export default {
 
     getCommonWords(phrase){
       var wordCounts = {}
-      //var phrase = " Marry had a little lamb, little lamb, and the lamb was white as snow.";
+      var phrase = " Marry had a little lamb, little lamb, and the lamb was white as snow.";
       phrase = phrase.replace(/(^\s*)|(\s*$)/gi,"");
       phrase = phrase.replace(/[ ]{2,}/gi," ");
       phrase = phrase.replace(/\n /,"\n");
@@ -67,7 +68,17 @@ export default {
       console.log(phrase);
       console.log(words)
       console.log(wordCounts)
-      }
+    }, 
+
+    // checkIfFetchIsCompleted(word){
+    //   if(word == "Error occured"){
+    //     checkIfFetchIsCompleted(word);
+    //   }else{
+    //     getCommonWords(word);
+    //     return;
+    //   }
+    // },
+
   }
 }
 </script>
