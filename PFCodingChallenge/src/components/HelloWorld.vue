@@ -11,15 +11,74 @@
 <script>
 export default {
   name: 'HelloWorld',
+  data() {
+    return {
+      wordList1: "Error occured",
+      wordList2: "Error occured",
+      wordList3: "Error occured",
+    }
+  },
   created() {
     const url1 = "https://frontend-coding-challenge.s3.amazonaws.com/1.txt";
-    fetch(url1)
-      .then(response => response.text())
-      .then(data => (this.text = data))
-      .then(function(data) {
-        console.log(data)
-      })
+    const url2 = "https://frontend-coding-challenge.s3.amazonaws.com/2.txt";
+    const url3 = "https://frontend-coding-challenge.s3.amazonaws.com/3.txt";
+
+    this.getWordsFromList1(url1);
+    this.getWordsFromList2(url2);
+    this.getWordsFromList3(url3);
+  }, 
+  mounted(){
+    this.getCommonWords();
+    //this.getCommonWords(this.wordList1);
+  },
+  methods:{
+    getWordsFromList1(url) {
+      fetch(url)
+      .then((response) => response.text())
+      .then((data) => (this.wordList1 = data))
       .catch(error => console.log(error))
+    },
+
+    getWordsFromList2(url){
+      fetch(url)
+      .then((response) => response.text())
+      .then((data) => (this.wordList2 = data))
+      .catch(error => console.log(error))
+    }, 
+
+    getWordsFromList3(url){
+    fetch(url)
+      .then((response) => response.text())
+      .then((data) => (this.wordList3 = data))
+      .catch(error => console.log(error))
+    }, 
+
+    getCommonWords(phrase){
+      var wordCounts = {}
+      var phrase = " Marry had a little lamb, little lamb, and the lamb was white as snow.";
+      phrase = phrase.replace(/(^\s*)|(\s*$)/gi,"");
+      phrase = phrase.replace(/[ ]{2,}/gi," ");
+      phrase = phrase.replace(/\n /,"\n");
+      phrase = phrase.replace(/[,.]/g, "");
+      phrase = phrase.toLowerCase();
+      var words = phrase.split(" ");
+      for(var i = 0; i < words.length; i++){
+        wordCounts["_" + words[i]] = (wordCounts["_" + words[i]] || 0) + 1;
+      }
+      console.log(phrase);
+      console.log(words)
+      console.log(wordCounts)
+    }, 
+
+    // checkIfFetchIsCompleted(word){
+    //   if(word == "Error occured"){
+    //     checkIfFetchIsCompleted(word);
+    //   }else{
+    //     getCommonWords(word);
+    //     return;
+    //   }
+    // },
+
   }
 }
 </script>
