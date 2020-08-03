@@ -5,6 +5,8 @@ Done in 18hrs - Note on crunchtime affects:
 >This is a front-end reactive web-app. API Fetching is done through Vue, no Backend.
 >However, files were added in src to mock front-end using vue-router.
 > JS ,CSS (no BEM conventions) and HTML were completed in one file HelloWorld.vue to reduce time. 
+>Blocker: Vue Instance bug = unable to render wanted words in time, therefore created my own. 
+>Left code that would have been used for wanted common words to demonstrate state. 
 
 
 1. Pulls the data from these three text files and finds the 5 most common words across them:
