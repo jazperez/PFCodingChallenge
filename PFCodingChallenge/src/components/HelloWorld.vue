@@ -11,10 +11,15 @@
 <script>
 export default {
   name: 'HelloWorld',
-  data () {
-    return {
-      msg: 'Welcome to Your Vue.js App'
-    }
+  created() {
+    const url1 = "https://frontend-coding-challenge.s3.amazonaws.com/1.txt";
+    fetch(url1)
+      .then(response => response.text())
+      .then(data => (this.text = data))
+      .then(function(data) {
+        console.log(data)
+      })
+      .catch(error => console.log(error))
   }
 }
 </script>
