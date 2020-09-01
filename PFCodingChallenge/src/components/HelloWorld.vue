@@ -3,7 +3,7 @@
     <div class="title">Piñata Farms Front-End Coding Challenge</div>
     <div class="container">
       <div class="child1">
-        <div @ondrop="drop($event)" @ondragover="allowDrop($event)">
+        <div @ondragover="onDragOver(event);" @ondrop="onDrop(event);">
           <div :key="componentKey" class="word-overlay">
             <video controls name="Video of man doing the moonwalk to Michael Jackson's song, 'Rock With You' ">
               <source
@@ -13,7 +13,8 @@
             </video>
             <div
               draggable="true"
-              @ondragstart="drag($event)"
+              id="draggable"
+              @ondragstart="onDragStart(event);"
               class="tooltip dragme"
               v-for="commonWord in commonWords"
               :key="commonWord.word"
@@ -51,24 +52,14 @@ export default {
     return {
       coordMsg: "",
       componentKey: 0,
-      wordList1: {
+      wordList: {
         word: "Error occured",
         show: true,
         colorCounter: 0,
         colors: ["red", "blue", "green", "yellow", "white"]
       },
-      wordList2: {
-        word: "Error occured",
-        show: true,
-        colorCounter: 0,
-        colors: ["red", "blue", "green", "yellow", "white"]
-      },
-      wordList3: {
-        word: "Error occured",
-        show: true,
-        colorCounter: 0,
-        colors: ["red", "blue", "green", "yellow", "white"]
-      },
+      resultArrayList:[],
+      longString:"",
       commonWords: [
         {
           word: "Moondance",
@@ -107,46 +98,104 @@ export default {
     const url2 = "https://frontend-coding-challenge.s3.amazonaws.com/2.txt";
     const url3 = "https://frontend-coding-challenge.s3.amazonaws.com/3.txt";
 
-    this.getWordsFromList1(url1);
-    this.getWordsFromList2(url2);
-    this.getWordsFromList3(url3);
+    //var urls = [url1, url2, url3];
+    //var getWords = this.getWordsFromLists(urls)
+
+    const aggregatedInput = this.getWordsFromLists(url1, url2, url3);
+    console.log("calling big method " + aggregatedInput);
+    //console.log("calling big method " + getWords);
+
+    //this.getCommonWords(aggregatedInput);
+    this.getCommonWords();
   },
   mounted() {
-    setTimeout(this.getCommonWords(this.wordList1.word), 300000);
+    //setTimeout(this.getCommonWords(this.wordList1.word), 300000);
     //this.getCommonWords(this.wordList1.word);
   },
   methods: {
-    getWordsFromList1(url) {
-      fetch(url)
-        .then(response => response.text())
-        .then(data => (this.wordList1.word = data))
-        .then(function(data) {
-          console.log(data);
+    async getWordsFromLists(url1, url2, url3) {
+      //solution 3
+      try{
+        let data = await Promise.all([
+          fetch(url1),
+          fetch(url2),
+          fetch(url3),
+        ]).then(function (responses){
+        return Promise.all(responses.map(response => response.text()))
+          .then(
+            arrayResults => {const singleArray = arrayResults.reduce((p, c) => p + c)
+            console.log("SingleArray: " + singleArray)
+            return singleArray
+            })
         })
-        .catch(error => console.log(error));
-    },
+        console.log("data: " + data)
+        return data;
+      }
+      catch (error){
+        console.log("Error occurred: " + error)
+        throw (error)
+      }
+      
+      //solution2
+      // var promise = new Promise(function (resolve, reject) {
+      //   Promise.all([
+      //     fetch(url1),
+      //     fetch(url2),
+      //     fetch(url3)])
+      //     .then(function (responses) {
+      //       Promise.all(responses.map((response) => response.text())).then(
+      //         (arrayResults) => {
+      //           const singleArray = arrayResults.reduce((p, c) => p + c);
+      //           console.log("within promise " + singleArray)
+      //           resolve(singleArray);
+      //         }
+      //       );
+      //     })
+      //   .catch(function (error) {
+      //     console.log("Error occurred: " + error);
+      //   });
+      // });
+      
+      
+      // promise.then(
+      //   function (singleArray) {
+      //     console.log("at promise.then single array result: " + singleArray)
+      //     return singleArray;
+      //   },
+      //   function (err) {
+      //     console.log("Error occurred: " + err);
+      //   }
+      // );
 
-    getWordsFromList2(url) {
-      fetch(url)
-        .then(response => response.text())
-        .then(data => (this.wordList2.word = data))
-        .catch(error => console.log(error));
-    },
-
-    getWordsFromList3(url) {
-      fetch(url)
-        .then(response => response.text())
-        .then(data => (this.wordList3.word = data))
-        .catch(error => console.log(error));
+      //solution1
+      // return Promise.all([
+      //   fetch(url1),
+      //   fetch(url2),
+      //   fetch(url3)
+      // ])
+      // .then(function (responses){
+      //   return Promise.all(responses.map(response => response.text()))
+      //     .then(
+      //       arrayResults => {const singleArray = arrayResults.reduce((p, c) => p + c)
+      //       return singleArray
+      //       })
+      // })
+      // .catch(function (error) {
+      //   console.log("Error occurred: " + error);
+      // })
+      // .then(function (data) {
+      //   console.log(data);
+      // })
     },
 
     getCommonWords(phrase) {
-      console.log(phrase);
+      var numOfCommonWords = 5;
       var wordCounts = {};
-      console.log("phrase: " + phrase);
+      //console.log("phrase: " + phrase);
+      //var phrase = phrase;
       //test phrase
       var phrase =
-        " Marry had a little lamb, little lamb, and the lamb was white as snow.";
+        " Marry had a little lamb, little lamb, and the lamb was white as snow. Lamb was so little and so white.";
       phrase = phrase.replace(/(^\s*)|(\s*$)/gi, "");
       phrase = phrase.replace(/[ ]{2,}/gi, " ");
       phrase = phrase.replace(/\n /, "\n");
@@ -154,12 +203,18 @@ export default {
       phrase = phrase.toLowerCase();
       var words = phrase.split(" ");
       for (var i = 0; i < words.length; i++) {
-        wordCounts["_" + words[i]] = (wordCounts["_" + words[i]] || 0) + 1;
+        wordCounts[words[i]] = (wordCounts[words[i]] || 0) + 1;
       }
+      var sortedNumCount = Object.entries(wordCounts).sort((a,b)=>b[1]-a[1]).map(el=>el[0])
+      this.resultArrayList = sortedNumCount.slice(0,numOfCommonWords);
 
       console.log(phrase);
       console.log(words);
       console.log(wordCounts);
+      console.log(sortedNumCount);
+      console.log(this.resultArrayList);
+      
+      return this.resultArrayList;
     },
 
     // checkIfFetchIsCompleted(word){
@@ -204,23 +259,35 @@ export default {
       this.componentKey += 1;
     }
   },
-  allowDrop($event) {
-    event.$preventDefault();
+  // allowDrop($event) {
+  //   event.$preventDefault();
+  // },
+
+  onDragStart(event) {
+    event
+      .dataTransfer
+      .setData('text/plain', event.target.id);
   },
 
-  dragStart($event) {
-    $event.dataTransfer.setData("text", ev.target.id);
+  onDragOver(event) {
+    event.preventDefault();
   },
-
-  dragDrop($event) {
-    $event.preventDefault();
-    var data = ev.dataTransfer.getData("text");
-    $event.target.appendChild(document.getElementById(data));
+  
+  onDrop(event) {
+  const id = event
+    .dataTransfer
+    .getData('text');
+    const draggableElement = document.getElementById(id);
+    const dropzone = event.target;
+    dropzone.appendChild(draggableElement);
+    event
+    .dataTransfer
+    .clearData();
   }
+
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 a {
   background-color: #42b983;
