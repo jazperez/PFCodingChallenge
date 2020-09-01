@@ -114,27 +114,36 @@ export default {
   },
   methods: {
     async getWordsFromLists(url1, url2, url3) {
-      //solution 3
-      try{
-        let data = await Promise.all([
-          fetch(url1),
-          fetch(url2),
-          fetch(url3),
-        ]).then(function (responses){
-        return Promise.all(responses.map(response => response.text()))
-          .then(
-            arrayResults => {const singleArray = arrayResults.reduce((p, c) => p + c)
-            console.log("SingleArray: " + singleArray)
-            return singleArray
-            })
-        })
-        console.log("data: " + data)
-        return data;
-      }
-      catch (error){
-        console.log("Error occurred: " + error)
-        throw (error)
-      }
+      //solution 4
+
+      await fetch(url1)
+      .then( function(response) {
+        return response.text() })
+      .then(result => {
+        //console.log(result)
+      } )
+
+      // //solution 3
+      // try{
+      //   let data = await Promise.all([
+      //     fetch(url1),
+      //     fetch(url2),
+      //     fetch(url3),
+      //   ]).then(function (responses){
+      //   return Promise.all(responses.map(response => response.text()))
+      //     .then(
+      //       arrayResults => {const singleArray = arrayResults.reduce((p, c) => p + c)
+      //       console.log("SingleArray: " + singleArray)
+      //       return singleArray
+      //       })
+      //   })
+      //   console.log("data: " + data)
+      //   return data;
+      // }
+      // catch (error){
+      //   console.log("Error occurred: " + error)
+      //   throw (error)
+      // }
       
       //solution2
       // var promise = new Promise(function (resolve, reject) {
