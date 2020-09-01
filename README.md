@@ -6,6 +6,7 @@ Front-End Engineer Intern Coding Challenge
 2. Renders these 5 words over a video player (you can use this video in your player
 https://frontend-coding-challenge.s3.amazonaws.com/moonwalker.mp4). Each word should
 have the following properties:
+
 a. A button adjacent to the video player that when clicked toggles if the word is on
 (rendered on the video) or off (not rendered on the video). When the word is toggled
 from off to on it should use the state (position and color, described below) it had when
