@@ -3,7 +3,7 @@
     <div class="title">Piñata Farms Front-End Coding Challenge</div>
     <div class="container">
       <div class="child1">
-        <div @ondrop="drop($event)" @ondragover="allowDrop($event)">
+        <div @ondragover="onDragOver(event);" @ondrop="onDrop(event);">
           <div :key="componentKey" class="word-overlay">
             <video controls name="Video of man doing the moonwalk to Michael Jackson's song, 'Rock With You' ">
               <source
@@ -13,7 +13,8 @@
             </video>
             <div
               draggable="true"
-              @ondragstart="drag($event)"
+              id="draggable"
+              @ondragstart="onDragStart(event);"
               class="tooltip dragme"
               v-for="commonWord in commonWords"
               :key="commonWord.word"
@@ -97,8 +98,13 @@ export default {
     const url2 = "https://frontend-coding-challenge.s3.amazonaws.com/2.txt";
     const url3 = "https://frontend-coding-challenge.s3.amazonaws.com/3.txt";
 
+    //var urls = [url1, url2, url3];
+    //var getWords = this.getWordsFromLists(urls)
+
     const aggregatedInput = this.getWordsFromLists(url1, url2, url3);
     console.log("calling big method " + aggregatedInput);
+    //console.log("calling big method " + getWords);
+
     //this.getCommonWords(aggregatedInput);
     this.getCommonWords();
   },
@@ -107,34 +113,59 @@ export default {
     //this.getCommonWords(this.wordList1.word);
   },
   methods: {
-    getWordsFromLists(url1, url2, url3) {
-      //solution2
-      var promise = new Promise(function (resolve, reject) {
-        return Promise.all([fetch(url1), fetch(url2), fetch(url3)])
-        .then(function (responses) {
-          return Promise.all(responses.map((response) => response.text())).then(
-            (arrayResults) => {
-              const singleArray = arrayResults.reduce((p, c) => p + c);
-              console.log("within promise " + singleArray)
-              resolve(singleArray);
-            }
-          );
+    async getWordsFromLists(url1, url2, url3) {
+      //solution 3
+      try{
+        let data = await Promise.all([
+          fetch(url1),
+          fetch(url2),
+          fetch(url3),
+        ]).then(function (responses){
+        return Promise.all(responses.map(response => response.text()))
+          .then(
+            arrayResults => {const singleArray = arrayResults.reduce((p, c) => p + c)
+            console.log("SingleArray: " + singleArray)
+            return singleArray
+            })
         })
-        .catch(function (error) {
-          console.log("Error occurred: " + error);
-        });
-      });
+        console.log("data: " + data)
+        return data;
+      }
+      catch (error){
+        console.log("Error occurred: " + error)
+        throw (error)
+      }
+      
+      //solution2
+      // var promise = new Promise(function (resolve, reject) {
+      //   Promise.all([
+      //     fetch(url1),
+      //     fetch(url2),
+      //     fetch(url3)])
+      //     .then(function (responses) {
+      //       Promise.all(responses.map((response) => response.text())).then(
+      //         (arrayResults) => {
+      //           const singleArray = arrayResults.reduce((p, c) => p + c);
+      //           console.log("within promise " + singleArray)
+      //           resolve(singleArray);
+      //         }
+      //       );
+      //     })
+      //   .catch(function (error) {
+      //     console.log("Error occurred: " + error);
+      //   });
+      // });
       
       
-      promise.then(
-        function (singleArray) {
-          console.log("at promise.then single array result: " + singleArray)
-          return singleArray;
-        },
-        function (err) {
-          console.log("Error occurred: " + err);
-        }
-      );
+      // promise.then(
+      //   function (singleArray) {
+      //     console.log("at promise.then single array result: " + singleArray)
+      //     return singleArray;
+      //   },
+      //   function (err) {
+      //     console.log("Error occurred: " + err);
+      //   }
+      // );
 
       //solution1
       // return Promise.all([
@@ -160,7 +191,7 @@ export default {
     getCommonWords(phrase) {
       var numOfCommonWords = 5;
       var wordCounts = {};
-      console.log("phrase: " + phrase);
+      //console.log("phrase: " + phrase);
       //var phrase = phrase;
       //test phrase
       var phrase =
@@ -228,23 +259,35 @@ export default {
       this.componentKey += 1;
     }
   },
-  allowDrop($event) {
-    event.$preventDefault();
+  // allowDrop($event) {
+  //   event.$preventDefault();
+  // },
+
+  onDragStart(event) {
+    event
+      .dataTransfer
+      .setData('text/plain', event.target.id);
   },
 
-  dragStart($event) {
-    $event.dataTransfer.setData("text", ev.target.id);
+  onDragOver(event) {
+    event.preventDefault();
   },
-
-  dragDrop($event) {
-    $event.preventDefault();
-    var data = ev.dataTransfer.getData("text");
-    $event.target.appendChild(document.getElementById(data));
+  
+  onDrop(event) {
+  const id = event
+    .dataTransfer
+    .getData('text');
+    const draggableElement = document.getElementById(id);
+    const dropzone = event.target;
+    dropzone.appendChild(draggableElement);
+    event
+    .dataTransfer
+    .clearData();
   }
+
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 a {
   background-color: #42b983;
